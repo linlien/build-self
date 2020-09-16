@@ -52,7 +52,7 @@ npm i build-self
     isNeedBuild: true // s是否需要打包
   };
 ```
-``` JavaScript
+``` javascript
 # 新建index.js
 
   import {setBuild} from 'build-self'
@@ -65,7 +65,7 @@ npm i build-self
 
 # 'build:self': "node ./build-self"
 ```
-``` JavaScript
+``` javascript
 # 运行命令
 
 npm run build:self

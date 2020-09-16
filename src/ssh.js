@@ -71,15 +71,22 @@ class SSH {
         if (err) {
           reject(err);
         } else {
-          sftp.fastPut(localPath, remotePath, (err, result) => {
-            if (err) {
-              reject(err);
+          sftp.fastPut(
+            localPath,
+            remotePath,
+            {
+              chunkSize: 1024, // 每次读取的大小（以字节为单位）
+            },
+            (err, result) => {
+              if (err) {
+                reject(err);
+              }
+              resolve({
+                success: true,
+                result
+              });
             }
-            resolve({
-              success: true,
-              result
-            });
-          });
+          );
         }
       });
     });

@@ -28,10 +28,6 @@ const config = {
   }
 };
 
-const args = process.argv.splice(2);
-const ENV = args[0] || "dev";
-console.log(`--------打包环境：${ENV}--------`);
-
 module.exports = {
   publishEnv: config[ENV], // 发布环境
   buildDist: "dist", // 前端文件打包之后的目录，默认dist

@@ -2,7 +2,6 @@ const { exec } = require("child_process");
 const path = require("path");
 const JSZIP = require("jszip");
 const fs = require("fs");
-const Config = require("./config.js");
 const chalk = require("chalk");
 const zip = new JSZIP();
 // 前端打包文件的目录
@@ -12,8 +11,8 @@ const rootDir = path.resolve(__dirname, "..");
  * 本地操作
  * */
 class FILE {
-  constructor() {
-    this.fileName = this.formateName();
+  constructor(fileName) {
+    this.fileName = this.formateName(fileName);
   }
 
   // 删除本地文件
@@ -101,9 +100,9 @@ class FILE {
   }
 
   // 打包本地前端文件
-  buildProject() {
+  buildProject(buildCommand) {
     return new Promise((resolve, reject) => {
-      exec(Config.buildCommand, async (error, stdout, stderr) => {
+      exec(buildCommand, async (error, stdout, stderr) => {
         if (error) {
           console.error(error);
           reject(error);
@@ -139,14 +138,14 @@ class FILE {
   }
 
   // 格式化命名文件名称
-  formateName() {
+  formateName(fileName) {
     // 压缩包的名字
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const timeStr = `${year}_${month}_${day}`;
-    return `${Config.buildDist}-${timeStr}-${Math.random()
+    return `${fileName}-${timeStr}-${Math.random()
       .toString(16)
       .slice(2)}.zip`;
   }

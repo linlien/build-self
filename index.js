@@ -1,14 +1,14 @@
 const path = require("path");
-const Config = require("./config.js");
 const chalk = require("chalk");
 // 前端打包文件的目录
 const rootDir = path.resolve(__dirname, "..");
 // 引入SSH、FILE
-const SSH = require("./ssh");
-const FILE = require("./file");
+const SSH = require("./src/ssh");
+const FILE = require("./sec/file");
 
 // SSH连接，上传，解压，删除等相关操作
-async function sshUpload(sshConfig, fileName) {
+async function sshUpload(buildConfig, fileName) {
+  const sshConfig = buildConfig.publishEnv
   const sshCon = new SSH(sshConfig);
   const sshRes = await sshCon.connectServer().catch(e => {
     console.error(e);
@@ -79,7 +79,7 @@ async function sshUpload(sshConfig, fileName) {
     console.error("----解压文件失败，请手动解压zip文件----");
     console.error(`----错误原因：${zipRes.error}----`);
     return false;
-  } else if (Config.deleteFile) {
+  } else if (buildConfig.deleteFile) {
     desc =
       "*******************************************\n" +
       "***  解压文件成功，开始删除上传的压缩包 ***\n" +
@@ -101,17 +101,33 @@ async function sshUpload(sshConfig, fileName) {
   return true;
 }
 
+const baseConfig = {
+  publishEnv: {
+    host: "", // 服务器ip地址或域名
+    username: "root", // ssh登录用户
+    password: "", // 密码，请勿将此密码上传至git服务器
+    catalog: "", // 前端文件压缩目录
+    port: 22, // 服务器ssh连接端口号
+    privateKey: null // 私钥，私钥与密码二选一
+  }, // 发布环境
+  buildDist: "dist", // 前端文件打包之后的目录，默认dist
+  buildCommand: "npm run build", // 打包前端文件的命令
+  readyTimeout: 20000, // ssh连接超时时间
+  deleteFile: true, // 是否删除线上上传的dist压缩包
+  isNeedBuild: true // s是否需要打包
+}
+
 // 执行前端部署
-(async () => {
-  const file = new FILE();
+async function setBuild (config = baseConfig) {
+  const file = new FILE(config.buildDist);
   let desc =
     "*******************************************\n" +
     "***              开始编译               ***\n" +
     "*******************************************\n";
-  if (Config.isNeedBuild) {
+  if (config.isNeedBuild) {
     console.log(chalk.green(desc));
     // 打包文件
-    const buildRes = await file.buildProject().catch(e => {
+    const buildRes = await file.buildProject(config.buildCommand).catch(e => {
       console.error(e);
     });
     if (!buildRes || !buildRes.success) {
@@ -131,7 +147,7 @@ async function sshUpload(sshConfig, fileName) {
   }
   // 压缩文件
   const res = await file
-    .zipFile(path.join(rootDir, "/", Config.buildDist))
+    .zipFile(path.join(rootDir, "/", config.buildDist))
     .catch(() => {});
   if (!res || !res.success) return false;
   desc =
@@ -140,7 +156,7 @@ async function sshUpload(sshConfig, fileName) {
     "*******************************************\n";
   console.log(chalk.green(desc));
 
-  const bol = await sshUpload(Config.publishEnv, file.fileName);
+  const bol = await sshUpload(config, file.fileName);
   if (bol) {
     desc =
       "\n******************************************\n" +
@@ -151,4 +167,4 @@ async function sshUpload(sshConfig, fileName) {
   } else {
     process.exit(1);
   }
-})();
+}

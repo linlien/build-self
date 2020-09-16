@@ -26,11 +26,13 @@ async function sshUpload(sshConfig, fileName) {
     "***     连接服务器成功，开始上传文件    ***\n" +
     "*******************************************\n";
   console.log(chalk.green(desc));
+
   // 判断文件是否存在，如果不存在则进行创建文件夹
   await sshCon.execSsh(
     `
-    if [[ ! -d ${sshConfig.catalog} ]]; then
-     mkdir -p ${sshConfig.catalog}
+    if [[ ! -d ${sshConfig.catalog} ]];
+    then
+      mkdir -p ${sshConfig.catalog}
     fi
     `
   );
@@ -93,6 +95,7 @@ async function sshUpload(sshConfig, fileName) {
       return false;
     }
   }
+
   // 结束ssh连接
   sshCon.endConn();
   return true;

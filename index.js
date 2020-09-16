@@ -1,10 +1,11 @@
 const path = require("path");
 const chalk = require("chalk");
-// 前端打包文件的目录
-const rootDir = path.resolve(__dirname, "..");
 // 引入SSH、FILE
 const SSH = require("./src/ssh");
-const FILE = require("./sec/file");
+const FILE = require("./src/file");
+
+// 前端打包文件的目录
+const rootDir = path.resolve(__dirname, "../..");
 
 // SSH连接，上传，解压，删除等相关操作
 async function sshUpload(buildConfig, fileName) {
@@ -119,6 +120,9 @@ const baseConfig = {
 
 // 执行前端部署
 async function setBuild (config = baseConfig) {
+  console.log('=============打包参数=============')
+  console.log(config)
+
   const file = new FILE(config.buildDist);
   let desc =
     "*******************************************\n" +
@@ -167,4 +171,8 @@ async function setBuild (config = baseConfig) {
   } else {
     process.exit(1);
   }
+}
+
+module.exports = {
+  setBuild
 }

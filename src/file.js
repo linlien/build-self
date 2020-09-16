@@ -1,11 +1,13 @@
 const { exec } = require("child_process");
 const path = require("path");
-const JSZIP = require("jszip");
 const fs = require("fs");
 const chalk = require("chalk");
+const JSZIP = require("jszip");
+
+// new zip对象
 const zip = new JSZIP();
 // 前端打包文件的目录
-const rootDir = path.resolve(__dirname, "..");
+const rootDir = path.resolve(__dirname, "../../..");
 
 /*
  * 本地操作

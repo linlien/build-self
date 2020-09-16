@@ -10,8 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/linlien/build-self.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "前端自动化部署",
+    "vue",
+    "react"
+  ],
+  "author": "linzeguang",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/linlien/build-self/issues"

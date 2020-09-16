@@ -121,4 +121,4 @@ class SSH {
   }
 }
 
-module.exports = SSH;
+module.exports = SSH
